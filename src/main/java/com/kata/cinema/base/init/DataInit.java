@@ -137,6 +137,7 @@ public class DataInit {
         roleService.save(new Role("USER"));
         roleService.save(new Role("ADMIN"));
         roleService.save(new Role("PUBLICIST"));
+        roleService.save(new Role("REDACTOR"));
     }
 
     public void createUser() {
@@ -162,6 +163,10 @@ public class DataInit {
             Set<Role> roles = new HashSet<>(Collections.singleton(roleService.getByName("USER")));
             switch (i) {
                 default -> user.setRoles(roles);
+                case 25 -> {
+                    roles.add(roleService.getByName("REDACTOR"));
+                    user.setRoles(roles);
+                }
                 case 26 -> {
                     roles.add(roleService.getByName("ADMIN"));
                     user.setRoles(roles);

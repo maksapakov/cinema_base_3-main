@@ -39,6 +39,9 @@ public class News {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "is_moderate")
+    private Boolean isModerate = false;
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
