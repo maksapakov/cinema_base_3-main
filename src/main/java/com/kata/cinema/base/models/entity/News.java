@@ -1,10 +1,10 @@
 package com.kata.cinema.base.models.entity;
 
-import com.kata.cinema.base.models.enums.Rubric;
+import com.kata.cinema.base.models.enums.RedactorStatus;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.Objects;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "news")
@@ -23,7 +23,7 @@ public class News {
     private Long id;
 
     @Column(name = "data")
-    private String data;
+    private LocalDateTime date;
 
     @Column(name = "title")
     private String title;
@@ -32,7 +32,7 @@ public class News {
     private String htmlBody;
 
     @Enumerated(value = EnumType.STRING)
-    private Rubric rubric;
+    private RedactorStatus redactorStatus;
 
     @ToString.Exclude
     @ManyToOne
@@ -47,7 +47,7 @@ public class News {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         News that = (News) o;
-        return id.equals(that.id) && data.equals(that.data) && title.equals(that.title) && rubric.equals(that.rubric) && htmlBody.equals(that.htmlBody);
+        return id.equals(that.id) && date.equals(that.date) && title.equals(that.title) && redactorStatus.equals(that.redactorStatus) && htmlBody.equals(that.htmlBody);
     }
 
     @Override
