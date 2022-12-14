@@ -10,6 +10,6 @@ import java.util.List;
 @Repository
 public interface NewsRepository extends JpaRepository<News, Long> {
 
-    //@Query("select n from News n where n.isModerate = false and n.redactorStatus = value(ACTIVE) ")
+    @Query("select n from News n where n.isModerate = false and n.redactorStatus = com.kata.cinema.base.models.enums.RedactorStatus.ACTIVE")
     List<News> findListNewsByIsModerateAndRedactorStatus(Long id);
 }
