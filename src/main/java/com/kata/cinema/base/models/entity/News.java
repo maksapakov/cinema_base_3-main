@@ -22,7 +22,7 @@ public class News {
             initialValue = 1, allocationSize = 5000)
     private Long id;
 
-    @Column(name = "data")
+    @Column(name = "date")
     private LocalDateTime date;
 
     @Column(name = "title")
@@ -31,6 +31,7 @@ public class News {
     @Column(name = "html_body")
     private String htmlBody;
 
+    @Column(name = "redactor_status")
     @Enumerated(value = EnumType.STRING)
     private RedactorStatus redactorStatus;
 

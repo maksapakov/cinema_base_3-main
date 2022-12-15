@@ -1,27 +1,10 @@
 package com.kata.cinema.base.init;
 
 import com.kata.cinema.base.models.dto.request.AvailableOnlineMovieRequestDto;
-import com.kata.cinema.base.models.entity.AvailableOnlineMovie;
 import com.kata.cinema.base.models.entity.Collection;
-import com.kata.cinema.base.models.entity.FolderMovie;
-import com.kata.cinema.base.models.entity.Genre;
-import com.kata.cinema.base.models.entity.Movie;
-import com.kata.cinema.base.models.entity.PurchasedMovie;
-import com.kata.cinema.base.models.entity.Role;
-import com.kata.cinema.base.models.entity.User;
-import com.kata.cinema.base.models.enums.Category;
-import com.kata.cinema.base.models.enums.MPAA;
-import com.kata.cinema.base.models.enums.Privacy;
-import com.kata.cinema.base.models.enums.PurchaseType;
-import com.kata.cinema.base.models.enums.RARS;
-import com.kata.cinema.base.service.entity.AvailableOnlineService;
-import com.kata.cinema.base.service.entity.CollectionService;
-import com.kata.cinema.base.service.entity.FolderMovieService;
-import com.kata.cinema.base.service.entity.GenreService;
-import com.kata.cinema.base.service.entity.MovieService;
-import com.kata.cinema.base.service.entity.PurchasedMovieService;
-import com.kata.cinema.base.service.entity.RoleService;
-import com.kata.cinema.base.service.entity.UserService;
+import com.kata.cinema.base.models.entity.*;
+import com.kata.cinema.base.models.enums.*;
+import com.kata.cinema.base.service.entity.*;
 import com.kata.cinema.base.service.entity.impl.CollectionServiceImp;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,14 +13,10 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Month;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Component
@@ -52,10 +31,14 @@ public class DataInit {
     private final PurchasedMovieService purchasedMovieService;
     private final AvailableOnlineService availableOnlineService;
 
+    private final NewsService newsService;
+
     private final PasswordEncoder passwordEncoder;
 
     public DataInit(MovieService movieService, GenreService genreService, CollectionServiceImp collectionService,
-                    RoleService roleService, UserService userService, FolderMovieService folderMovieService, PurchasedMovieService purchasedMovieService, AvailableOnlineService availableOnlineService, PasswordEncoder passwordEncoder) {
+                    RoleService roleService, UserService userService, FolderMovieService folderMovieService,
+                    PurchasedMovieService purchasedMovieService, AvailableOnlineService availableOnlineService,
+                    NewsService newsService, PasswordEncoder passwordEncoder) {
         this.movieService = movieService;
         this.genreService = genreService;
         this.collectionService = collectionService;
@@ -64,6 +47,7 @@ public class DataInit {
         this.folderMovieService = folderMovieService;
         this.purchasedMovieService = purchasedMovieService;
         this.availableOnlineService = availableOnlineService;
+        this.newsService = newsService; //добавление новостей в базу для теста
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -75,6 +59,29 @@ public class DataInit {
         createRole();
         createUser();
         createFolderMovie();
+        createNews();
+    }
+
+    private void createNews() {
+        for (int i = 1; i <= 20; i++) {
+            News news = new News();
+            news.setDate(
+                    LocalDateTime.of(
+                            LocalDate.ofEpochDay(ThreadLocalRandom.current()
+                                    .nextLong(LocalDate.of(2022, Month.JANUARY, 1).toEpochDay(),
+                                            LocalDate.now().toEpochDay())),
+                            LocalTime.ofSecondOfDay(ThreadLocalRandom.current()
+                                    .nextInt(0,86399))
+                    )
+            );
+
+            news.setIsModerate(ThreadLocalRandom.current().nextBoolean());
+
+            List<RedactorStatus> redactorStatuses = Arrays.asList(RedactorStatus.values());
+            news.setRedactorStatus(redactorStatuses.get(new SecureRandom().nextInt(redactorStatuses.size())));
+
+            newsService.save(news);
+        }
     }
 
     public void createGenre() {
@@ -82,6 +89,7 @@ public class DataInit {
             genreService.save(new Genre("Жанр" + i));
         }
     }
+
     //  for commit
     public void createMovie() {
         for (int i = 1; i <= 100; i++) {
@@ -228,7 +236,7 @@ public class DataInit {
                 folderMovie.setDescription("описание описание описание описание описание описание описание описание ");
 
                 Set<Movie> movies = new HashSet<>();
-                int amount = new Random().nextInt(5,26);
+                int amount = new Random().nextInt(5, 26);
                 for (int j = 0; j < amount; j++) {
                     movies.add(movieList.get(new Random().nextInt(0, movieList.size())));
                 }
