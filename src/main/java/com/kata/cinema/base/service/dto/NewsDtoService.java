@@ -9,6 +9,6 @@ public interface NewsDtoService {
     //доставать все новости с isModerate=false и status=ACTIVE или null сортировка по дате от самых новых
     List<NewsResponseDto> getAllNewsByIsModerateAndRedactorStatus();
 
-    List<NewsResponseDto> getNewsByDate(Long id);
+    List<NewsResponseDto> getNewsById(Long id);
 
 }

@@ -1,11 +1,11 @@
 package com.kata.cinema.base.webapp.controllers.redactor;
 
+import com.kata.cinema.base.models.dto.request.RedactorCommentRequestDto;
 import com.kata.cinema.base.models.dto.response.NewsResponseDto;
 import com.kata.cinema.base.service.dto.NewsDtoService;
 import com.kata.cinema.base.service.entity.NewsService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,5 +23,10 @@ public class RedactorNewsRestController {
     @GetMapping("/api/redactor/news")
     public List<NewsResponseDto> getNewsByIsModerateAndRedactorStatus() {
         return newsDtoService.getAllNewsByIsModerateAndRedactorStatus();
+    }
+
+    @PostMapping("/api/redactor/news/{id}")
+    public void updateNewsIsModerate(@PathVariable String id) {
+
     }
 }

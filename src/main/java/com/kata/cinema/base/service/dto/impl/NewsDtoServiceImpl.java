@@ -30,7 +30,7 @@ public class NewsDtoServiceImpl implements NewsDtoService {
     }
 
     @Override
-    public List<NewsResponseDto> getNewsByDate(Long id) {
+    public List<NewsResponseDto> getNewsById(Long id) {
         return null;
     }
 }
