@@ -12,6 +12,6 @@ public interface NewsDtoService {
 
     News getNewsById(Long id);
 
-    News udateNews(News news);
+    News updateNews(News news);
 
 }

@@ -36,7 +36,7 @@ public class NewsDtoServiceImpl implements NewsDtoService {
     }
 
     @Override
-    public News udateNews(News news) {
+    public News updateNews(News news) {
         return newsRepository.save(news);
     }
 }

@@ -33,7 +33,7 @@ public class RedactorNewsRestController {
 
             News updateNewsIsModerate = newsDtoService.getNewsById(id);
             updateNewsIsModerate.setIsModerate(true);
-            newsDtoService.udateNews(updateNewsIsModerate);
+            newsDtoService.updateNews(updateNewsIsModerate);
         }
     }
 }
