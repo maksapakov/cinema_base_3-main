@@ -2,6 +2,7 @@ package com.kata.cinema.base.service.dto.impl;
 
 import com.kata.cinema.base.mappers.NewsMappers;
 import com.kata.cinema.base.models.dto.response.NewsResponseDto;
+import com.kata.cinema.base.models.entity.News;
 import com.kata.cinema.base.repositories.NewsRepository;
 import com.kata.cinema.base.service.dto.NewsDtoService;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -30,7 +31,12 @@ public class NewsDtoServiceImpl implements NewsDtoService {
     }
 
     @Override
-    public List<NewsResponseDto> getNewsById(Long id) {
-        return null;
+    public News getNewsById(Long id) {
+        return newsMappers.toEntity(newsMappers.toDTO(newsRepository.getById(id)));
+    }
+
+    @Override
+    public News udateNews(News news) {
+        return newsRepository.save(news);
     }
 }
