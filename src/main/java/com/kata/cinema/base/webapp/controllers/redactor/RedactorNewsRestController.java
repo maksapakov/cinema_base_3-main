@@ -1,10 +1,14 @@
 package com.kata.cinema.base.webapp.controllers.redactor;
 
+import com.kata.cinema.base.mappers.RedactorCommentDtoMapper;
 import com.kata.cinema.base.models.dto.request.RedactorCommentRequestDto;
 import com.kata.cinema.base.models.dto.response.NewsResponseDto;
 import com.kata.cinema.base.models.entity.News;
+import com.kata.cinema.base.models.entity.RedactorComment;
 import com.kata.cinema.base.service.dto.NewsDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -14,10 +18,13 @@ import java.util.List;
 public class RedactorNewsRestController {
 
     private final NewsDtoService newsDtoService;
+    private final RedactorCommentDtoMapper redactorCommentDtoMapper;
 
     @Autowired
-    public RedactorNewsRestController(NewsDtoService newsService) {
+    public RedactorNewsRestController(NewsDtoService newsService,
+                                      RedactorCommentDtoMapper redactorCommentDtoMapper) {
         this.newsDtoService = newsService;
+        this.redactorCommentDtoMapper = redactorCommentDtoMapper;
     }
 
     //доставать все новости с isModerate=false и status=ACTIVE или null сортировка по дате от самых новых
@@ -26,14 +33,21 @@ public class RedactorNewsRestController {
         return newsDtoService.getAllNewsByIsModerateAndRedactorStatus();
     }
 
-    @PatchMapping("/api/redactor/news/{id}")
-    public void updateNewsIsModerate(@PathVariable Long id, @RequestBody RedactorCommentRequestDto redactorCommentRequestDto) {
+    @PostMapping("/api/redactor/news/{id}")
+    public ResponseEntity<?> updateNewsIsModerate(@PathVariable Long id,
+                                                  @RequestBody RedactorCommentRequestDto redactorCommentRequestDto) {
+        //Получаю новость по id
+        News updateNewsIsModerate = newsDtoService.getNewsById(id);
 
-        if (redactorCommentRequestDto.getRedactorStatus().toString().equals("RESOLVED")) {
+        //проверяю на соответствие условию redactorStatus = RESOLVED
+        if (updateNewsIsModerate.getRedactorStatus().toString().equals("RESOLVED")) {
 
-            News updateNewsIsModerate = newsDtoService.getNewsById(id);
+            //Если всё нормально, то устанавливаю в новости isModerate = true
             updateNewsIsModerate.setIsModerate(true);
+            //Записываю изменения в базу
             newsDtoService.updateNews(updateNewsIsModerate);
         }
+        //Здесь не понимаю, в моём понимании, я устанавливаю сущности параметры @RequestBody
+        return ResponseEntity.ok(redactorCommentRequestDto);
     }
 }
