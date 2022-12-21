@@ -1,5 +1,6 @@
 package com.kata.cinema.base.models.entity;
 
+import com.kata.cinema.base.models.enums.RedactorStatus;
 import com.kata.cinema.base.models.enums.TypeReview;
 import java.time.LocalDate;
 import javax.persistence.Column;
@@ -14,10 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 
 @Entity
 @Table(name = "reviews")
@@ -25,13 +24,14 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
+@ToString
 public class Review {
 
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "review_seq")
   @SequenceGenerator(name = "review_seq",
-      sequenceName = "review_sequence",
-      initialValue = 1, allocationSize = 100)
+          sequenceName = "review_sequence",
+          initialValue = 1, allocationSize = 100)
   private Long id;
 
   @Column(nullable = false, name = "type_review")
@@ -54,6 +54,13 @@ public class Review {
   @ManyToOne(fetch = FetchType.LAZY, optional = false)
   @JoinColumn(name = "user_id")
   private User user;
+
+  @Column(name = "redactor_status")
+  @Enumerated(value = EnumType.STRING)
+  private RedactorStatus redactorStatus;
+
+  @Column(name = "is_moderate")
+  private Boolean isModerate = false;
 }
 
 
