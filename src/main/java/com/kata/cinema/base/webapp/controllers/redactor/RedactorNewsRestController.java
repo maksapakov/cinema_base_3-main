@@ -5,6 +5,7 @@ import com.kata.cinema.base.models.dto.request.RedactorCommentRequestDto;
 import com.kata.cinema.base.models.dto.response.NewsResponseDto;
 import com.kata.cinema.base.models.entity.News;
 import com.kata.cinema.base.models.entity.RedactorComment;
+import com.kata.cinema.base.models.enums.RedactorStatus;
 import com.kata.cinema.base.service.dto.NewsDtoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,9 +22,9 @@ public class RedactorNewsRestController {
     private final RedactorCommentDtoMapper redactorCommentDtoMapper;
 
     @Autowired
-    public RedactorNewsRestController(NewsDtoService newsService,
+    public RedactorNewsRestController(NewsDtoService newsDtoService,
                                       RedactorCommentDtoMapper redactorCommentDtoMapper) {
-        this.newsDtoService = newsService;
+        this.newsDtoService = newsDtoService;
         this.redactorCommentDtoMapper = redactorCommentDtoMapper;
     }
 
@@ -40,14 +41,16 @@ public class RedactorNewsRestController {
         News updateNewsIsModerate = newsDtoService.getNewsById(id);
 
         //проверяю на соответствие условию redactorStatus = RESOLVED
-        if (updateNewsIsModerate.getRedactorStatus().toString().equals("RESOLVED")) {
+        if (updateNewsIsModerate.getRedactorStatus().equals(RedactorStatus.RESOLVED)) {
 
             //Если всё нормально, то устанавливаю в новости isModerate = true
             updateNewsIsModerate.setIsModerate(true);
             //Записываю изменения в базу
             newsDtoService.updateNews(updateNewsIsModerate);
+        } else {
+            newsDtoService.updateNews(updateNewsIsModerate);
         }
         //Здесь не понимаю, в моём понимании, я устанавливаю сущности параметры @RequestBody
-        return ResponseEntity.ok(redactorCommentRequestDto);
+        return ResponseEntity.ok().build();
     }
 }
