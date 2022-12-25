@@ -10,6 +10,11 @@ import java.util.List;
 
 @Repository
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    @Query("select r from Review r where r.isModerate = false and (r.redactorStatus = 'ACTIVE' or r.redactorStatus is null) order by r.date desc")
+    @Query("select r from Review r \n" +
+            "join fetch r.movie \n" +
+            "join fetch r.user\n" +
+            "where r.isModerate = false \n" +
+            "and (r.redactorStatus = 'ACTIVE' or r.redactorStatus is null) \n" +
+            "order by r.date desc")
     List<Review> findByIsModerateFalseAndRedactorStatusEqualsOrRedactorStatusNull();
 }

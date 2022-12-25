@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
-public interface RedactorCommentDtoMapper {
+public interface RedactorCommentMapper {
 
     @Mapping(target = "comment", source = "comment")
     @Mapping(target = "redactorStatus", source = "redactorStatus")

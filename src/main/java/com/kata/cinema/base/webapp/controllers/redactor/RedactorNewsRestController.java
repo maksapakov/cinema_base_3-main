@@ -1,14 +1,16 @@
 package com.kata.cinema.base.webapp.controllers.redactor;
 
-import com.kata.cinema.base.mappers.RedactorCommentDtoMapper;
+import com.kata.cinema.base.mappers.RedactorCommentMapper;
 import com.kata.cinema.base.models.dto.request.RedactorCommentRequestDto;
 import com.kata.cinema.base.models.dto.response.NewsResponseDto;
 import com.kata.cinema.base.models.entity.News;
 import com.kata.cinema.base.models.entity.RedactorComment;
 import com.kata.cinema.base.models.enums.RedactorStatus;
+import com.kata.cinema.base.repositories.RedactorCommentRepository;
 import com.kata.cinema.base.service.dto.NewsDtoService;
+import com.kata.cinema.base.service.dto.RedactorCommentDtoService;
+import com.kata.cinema.base.service.dto.impl.RedactorCommentDtoServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,13 +21,19 @@ import java.util.List;
 public class RedactorNewsRestController {
 
     private final NewsDtoService newsDtoService;
-    private final RedactorCommentDtoMapper redactorCommentDtoMapper;
+    private final RedactorCommentMapper redactorCommentMapper;
+
+    private final RedactorCommentDtoService redactorCommentDtoService;
+    private final RedactorCommentRepository redactorCommentRepository;
 
     @Autowired
     public RedactorNewsRestController(NewsDtoService newsDtoService,
-                                      RedactorCommentDtoMapper redactorCommentDtoMapper) {
+                                      RedactorCommentMapper redactorCommentMapper, RedactorCommentDtoService redactorCommentDtoService,
+                                      RedactorCommentRepository redactorCommentRepository) {
         this.newsDtoService = newsDtoService;
-        this.redactorCommentDtoMapper = redactorCommentDtoMapper;
+        this.redactorCommentMapper = redactorCommentMapper;
+        this.redactorCommentDtoService = redactorCommentDtoService;
+        this.redactorCommentRepository = redactorCommentRepository;
     }
 
     //доставать все новости с isModerate=false и status=ACTIVE или null сортировка по дате от самых новых
@@ -41,14 +49,19 @@ public class RedactorNewsRestController {
         News updateNewsIsModerate = newsDtoService.getNewsById(id);
 
         //проверяю на соответствие условию redactorStatus = RESOLVED
-        if (updateNewsIsModerate.getRedactorStatus().equals(RedactorStatus.RESOLVED)) {
+        if (redactorCommentRequestDto.getRedactorStatus().equals(RedactorStatus.RESOLVED)) {
 
             //Если всё нормально, то устанавливаю в новости isModerate = true
             updateNewsIsModerate.setIsModerate(true);
+
+
             //Записываю изменения в базу
             newsDtoService.updateNews(updateNewsIsModerate);
         } else {
-            newsDtoService.updateNews(updateNewsIsModerate);
+            RedactorComment redactorComment = redactorCommentRepository.findRedactorCommentByNews_Id(id);
+            redactorComment.setRedactorStatus(redactorCommentRequestDto.getRedactorStatus());
+            redactorComment.setComment(redactorCommentRequestDto.getComment());
+            redactorCommentRepository.save(redactorComment);
         }
         //Здесь не понимаю, в моём понимании, я устанавливаю сущности параметры @RequestBody
         return ResponseEntity.ok().build();

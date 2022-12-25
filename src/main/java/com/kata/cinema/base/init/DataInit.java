@@ -5,6 +5,7 @@ import com.kata.cinema.base.models.entity.Collection;
 import com.kata.cinema.base.models.entity.*;
 import com.kata.cinema.base.models.enums.*;
 import com.kata.cinema.base.repositories.NewsRepository;
+import com.kata.cinema.base.repositories.ReviewRepository;
 import com.kata.cinema.base.service.entity.*;
 import com.kata.cinema.base.service.entity.impl.CollectionServiceImp;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -38,12 +39,15 @@ public class DataInit {
 
     private final PasswordEncoder passwordEncoder;
     private final NewsRepository newsRepository;
+    private RedactorCommentService redactorCommentService;
+    private final ReviewRepository reviewRepository;
 
     public DataInit(MovieService movieService, GenreService genreService, CollectionServiceImp collectionService,
                     RoleService roleService, UserService userService, FolderMovieService folderMovieService,
                     PurchasedMovieService purchasedMovieService, AvailableOnlineService availableOnlineService,
                     NewsService newsService, ReviewService reviewService, PasswordEncoder passwordEncoder,
-                    NewsRepository newsRepository) {
+                    NewsRepository newsRepository, RedactorCommentService redactorCommentService,
+                    ReviewRepository reviewRepository) {
         this.movieService = movieService;
         this.genreService = genreService;
         this.collectionService = collectionService;
@@ -56,6 +60,8 @@ public class DataInit {
         this.reviewService = reviewService; //добавление ревью в базу
         this.passwordEncoder = passwordEncoder;
         this.newsRepository = newsRepository;
+        this.redactorCommentService = redactorCommentService;
+        this.reviewRepository = reviewRepository;
     }
 
     @PostConstruct
@@ -68,6 +74,7 @@ public class DataInit {
         createFolderMovie();
         createNews();
         createReviews();
+        createRedactorComment();
     }
 
     private void createNews() {
@@ -99,6 +106,7 @@ public class DataInit {
     }
 
     //  for commit
+
     public void createMovie() {
         for (int i = 1; i <= 100; i++) {
             Movie movie = new Movie();
@@ -134,7 +142,6 @@ public class DataInit {
             }
         }
     }
-
     public void createCollection() {
         for (int i = 1; i <= 20; i++) {
             boolean enable = !Arrays.asList(2, 6, 10, 14, 18).contains(i);
@@ -282,6 +289,27 @@ public class DataInit {
             review.setRedactorStatus(redactorStatuses.get(new SecureRandom().nextInt(redactorStatuses.size())));
 
             reviewService.save(review);
+        }
+    }
+
+    private void createRedactorComment() {
+        for (int i = 1; i <= 20; i++) {
+
+            RedactorComment redactorComment = new RedactorComment();
+
+            List<Review> reviewList = new ArrayList<>(reviewService.getAll());
+            int randomReview = ThreadLocalRandom.current().nextInt(1, reviewList.size());
+            redactorComment.setReview(reviewList.get(randomReview));
+
+            List<News> newsList = new ArrayList<>(newsService.getAll());
+            int randomNews = ThreadLocalRandom.current().nextInt(1,newsList.size());
+            redactorComment.setNews(newsList.get(randomNews));
+
+            redactorComment.setComment("Комменетарий" + i);
+
+            redactorComment.setUser(userService.getById(Long.valueOf(25)));
+
+            redactorCommentService.save(redactorComment);
         }
     }
 

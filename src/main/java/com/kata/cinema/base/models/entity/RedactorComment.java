@@ -33,6 +33,7 @@ public class RedactorComment {
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
     private User user;
 
+    @Column(name = "redactor_status")
     @Enumerated (value = EnumType.STRING)
     private RedactorStatus redactorStatus;
 
