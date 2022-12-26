@@ -2,6 +2,7 @@ package com.kata.cinema.base.service.dto.impl;
 
 import com.kata.cinema.base.mappers.RedactorCommentMapper;
 import com.kata.cinema.base.models.dto.request.RedactorCommentRequestDto;
+import com.kata.cinema.base.models.entity.News;
 import com.kata.cinema.base.models.entity.RedactorComment;
 import com.kata.cinema.base.repositories.NewsRepository;
 import com.kata.cinema.base.repositories.RedactorCommentRepository;
@@ -24,8 +25,8 @@ public class RedactorCommentDtoServiceImpl implements RedactorCommentDtoService 
     }
 
     @Override
-    public RedactorComment getRedactorCommentByNews_IdAndRedactorCommentRequestDto
-            (Long id, RedactorCommentRequestDto redactorCommentRequestDto) {
-        return redactorCommentMapper.toDTO();
+    public RedactorComment getRedactorCommentByNews_Id(Long id) {
+
+        return redactorCommentRepository.findRedactorCommentByNews_Id(id);
     }
 }

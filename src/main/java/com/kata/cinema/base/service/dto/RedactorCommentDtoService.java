@@ -6,6 +6,5 @@ import org.springframework.stereotype.Service;
 
 public interface RedactorCommentDtoService {
 
-    RedactorComment getRedactorCommentByNews_IdAndRedactorCommentRequestDto
-            (Long id, RedactorCommentRequestDto redactorCommentRequestDto);
+    RedactorComment getRedactorCommentByNews_Id (Long id);
 }

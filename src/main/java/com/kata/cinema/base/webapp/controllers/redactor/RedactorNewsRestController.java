@@ -46,19 +46,24 @@ public class RedactorNewsRestController {
     public ResponseEntity<?> updateNewsIsModerate(@PathVariable Long id,
                                                   @RequestBody RedactorCommentRequestDto redactorCommentRequestDto) {
         //Получаю новость по id
-        News updateNewsIsModerate = newsDtoService.getNewsById(id);
+//        News news = newsDtoService.getNewsById(id);
+        RedactorComment redactorComment = redactorCommentRepository.findRedactorCommentByNews_Id(id);
 
         //проверяю на соответствие условию redactorStatus = RESOLVED
         if (redactorCommentRequestDto.getRedactorStatus().equals(RedactorStatus.RESOLVED)) {
 
+            redactorComment.setComment(redactorComment.getComment());
+            redactorComment.setRedactorStatus(redactorCommentRequestDto.getRedactorStatus());
+            redactorComment.getNews().setIsModerate(true);
+
             //Если всё нормально, то устанавливаю в новости isModerate = true
-            updateNewsIsModerate.setIsModerate(true);
+//            news.setIsModerate(true);
 
 
             //Записываю изменения в базу
-            newsDtoService.updateNews(updateNewsIsModerate);
+//            newsDtoService.updateNews(news);
+            redactorCommentRepository.save(redactorComment);
         } else {
-            RedactorComment redactorComment = redactorCommentRepository.findRedactorCommentByNews_Id(id);
             redactorComment.setRedactorStatus(redactorCommentRequestDto.getRedactorStatus());
             redactorComment.setComment(redactorCommentRequestDto.getComment());
             redactorCommentRepository.save(redactorComment);
