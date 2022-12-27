@@ -11,9 +11,7 @@ import java.util.List;
 public interface NewsRepository extends JpaRepository<News, Long> {
 
     @Query("select n from News n \n" +
-            "where n.isModerate = false \n" +
-            "and (n.redactorStatus = 'ACTIVE' \n" +
-            "    or n.redactorStatus is null)\n" +
+            "where n.isModerate = false\n" +
             "order by n.date desc ")
     List<News> findListAllNewsByIsModerateAndRedactorStatus();
 }

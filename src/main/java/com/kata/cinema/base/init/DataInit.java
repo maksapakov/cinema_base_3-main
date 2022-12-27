@@ -6,6 +6,7 @@ import com.kata.cinema.base.models.entity.*;
 import com.kata.cinema.base.models.enums.*;
 import com.kata.cinema.base.repositories.NewsRepository;
 import com.kata.cinema.base.repositories.ReviewRepository;
+import com.kata.cinema.base.repositories.UserRepository;
 import com.kata.cinema.base.service.entity.*;
 import com.kata.cinema.base.service.entity.impl.CollectionServiceImp;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
@@ -41,13 +42,15 @@ public class DataInit {
     private final NewsRepository newsRepository;
     private RedactorCommentService redactorCommentService;
     private final ReviewRepository reviewRepository;
+    private final UserRepository userRepository;
 
     public DataInit(MovieService movieService, GenreService genreService, CollectionServiceImp collectionService,
                     RoleService roleService, UserService userService, FolderMovieService folderMovieService,
                     PurchasedMovieService purchasedMovieService, AvailableOnlineService availableOnlineService,
                     NewsService newsService, ReviewService reviewService, PasswordEncoder passwordEncoder,
                     NewsRepository newsRepository, RedactorCommentService redactorCommentService,
-                    ReviewRepository reviewRepository) {
+                    ReviewRepository reviewRepository,
+                    UserRepository userRepository) {
         this.movieService = movieService;
         this.genreService = genreService;
         this.collectionService = collectionService;
@@ -62,6 +65,7 @@ public class DataInit {
         this.newsRepository = newsRepository;
         this.redactorCommentService = redactorCommentService;
         this.reviewRepository = reviewRepository;
+        this.userRepository = userRepository;
     }
 
     @PostConstruct
@@ -78,7 +82,7 @@ public class DataInit {
     }
 
     private void createNews() {
-        for (int i = 1; i <= 20; i++) {
+        for (int i = 1; i <= 30; i++) {
             News news = new News();
             news.setDate(
                     LocalDateTime.of(
@@ -91,9 +95,6 @@ public class DataInit {
             );
 
             news.setIsModerate(ThreadLocalRandom.current().nextBoolean());
-
-            List<RedactorStatus> redactorStatuses = Arrays.asList(RedactorStatus.values());
-            news.setRedactorStatus(redactorStatuses.get(new SecureRandom().nextInt(redactorStatuses.size())));
 
             newsService.save(news);
         }
@@ -285,29 +286,33 @@ public class DataInit {
             int randomMovie = ThreadLocalRandom.current().nextInt(1, movieList.size());
             review.setMovie(movieList.get(randomMovie));
 
-            List<RedactorStatus> redactorStatuses = Arrays.asList(RedactorStatus.values());
-            review.setRedactorStatus(redactorStatuses.get(new SecureRandom().nextInt(redactorStatuses.size())));
-
             reviewService.save(review);
         }
     }
 
     private void createRedactorComment() {
+
+        List<News> newsList = new ArrayList<>(newsService.getAll());
+        Collections.shuffle(newsList);
+
+        List<Review> reviewList = new ArrayList<>(reviewService.findAllWithFetch());
+        Collections.shuffle(reviewList);
+
         for (int i = 1; i <= 20; i++) {
+
+            Review review = reviewList.get(i);
+            News news = newsList.get(i);
 
             RedactorComment redactorComment = new RedactorComment();
 
-            List<Review> reviewList = new ArrayList<>(reviewService.getAll());
-            int randomReview = ThreadLocalRandom.current().nextInt(1, reviewList.size());
-            redactorComment.setReview(reviewList.get(randomReview));
+            redactorComment.setReview(review);
 
-            List<News> newsList = new ArrayList<>(newsService.getAll());
-            int randomNews = ThreadLocalRandom.current().nextInt(1,newsList.size());
-            redactorComment.setNews(newsList.get(randomNews));
+            redactorComment.setNews(news);
 
             redactorComment.setComment("Комменетарий" + i);
 
-            redactorComment.setUser(userService.getById(Long.valueOf(25)));
+//            redactorComment.setUser(userService.getById(Long.valueOf(25)));
+            redactorComment.setUser(userRepository.getById(25L));
 
             redactorCommentService.save(redactorComment);
         }

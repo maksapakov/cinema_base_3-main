@@ -14,7 +14,9 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
             "join fetch r.movie \n" +
             "join fetch r.user\n" +
             "where r.isModerate = false \n" +
-            "and (r.redactorStatus = 'ACTIVE' or r.redactorStatus is null) \n" +
             "order by r.date desc")
     List<Review> findByIsModerateFalseAndRedactorStatusEqualsOrRedactorStatusNull();
+
+    @Query("select r from Review r join fetch r.movie join fetch r.user")
+    List<Review> findAllWithJoin();
 }

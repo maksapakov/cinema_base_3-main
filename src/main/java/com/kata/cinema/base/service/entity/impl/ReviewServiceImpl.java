@@ -1,6 +1,5 @@
 package com.kata.cinema.base.service.entity.impl;
 
-import com.kata.cinema.base.models.entity.News;
 import com.kata.cinema.base.models.entity.Review;
 import com.kata.cinema.base.repositories.ReviewRepository;
 import com.kata.cinema.base.service.entity.ReviewService;
@@ -25,5 +24,9 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<Review> getAll() {
         return reviewRepository.findAll();
+    }
+
+    public List<Review> findAllWithFetch() {
+        return reviewRepository.findAllWithJoin();
     }
 }

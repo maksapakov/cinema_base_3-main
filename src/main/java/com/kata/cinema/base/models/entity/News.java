@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 @ToString
+@EqualsAndHashCode
 public class News {
 
     @Id
@@ -31,10 +32,6 @@ public class News {
     @Column(name = "html_body")
     private String htmlBody;
 
-    @Column(name = "redactor_status")
-    @Enumerated(value = EnumType.STRING)
-    private RedactorStatus redactorStatus;
-
     @ToString.Exclude
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -43,16 +40,4 @@ public class News {
     @Column(name = "is_moderate")
     private Boolean isModerate = false;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        News that = (News) o;
-        return id.equals(that.id) && date.equals(that.date) && title.equals(that.title) && redactorStatus.equals(that.redactorStatus) && htmlBody.equals(that.htmlBody);
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
-    }
 }
