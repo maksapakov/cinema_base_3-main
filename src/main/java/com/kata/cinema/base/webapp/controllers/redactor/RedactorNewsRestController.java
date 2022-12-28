@@ -40,7 +40,7 @@ public class RedactorNewsRestController {
     public ResponseEntity<?> updateNewsIsModerate(@PathVariable Long id,
                                                   @RequestBody RedactorCommentRequestDto redactorCommentRequestDto) {
 
-        RedactorComment redactorComment = redactorCommentRepository.findRedactorCommentByNews_Id(id);
+        RedactorComment redactorComment = redactorCommentRepository.findRedactorCommentByEntity_Id(id);
 
         //проверяю на соответствие условию redactorStatus = RESOLVED
         if (redactorCommentRequestDto.getRedactorStatus().equals(RedactorStatus.RESOLVED)) {
